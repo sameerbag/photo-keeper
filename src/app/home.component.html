@@ -1,0 +1,31 @@
+<div class="card">
+        <h1>Users</h1>
+        <table border="1">
+          <th>Name</th>
+          <th>Email</th>
+          <th>Address</th>
+          <tr *ngFor="let user of users" (click)="showAlbums(user.id)" [ngClass]="{'active': selectedUser == user.id}">
+            <td>{{user.name}}</td>
+            <td>{{user.email}}</td>
+            <td>
+              {{user.address.street}}<br/>
+              {{user.address.suite}}<br/>
+              {{user.address.city}}<br/>
+              {{user.address.zipcode}}<br/>
+            </td>
+          </tr>
+        </table>
+    </div>
+    <div class="card">
+        <h1>Albums</h1>
+        <ul>
+          <li *ngFor="let album of albums" (click)="selectedAlbum(album.id)" >
+            {{album.title}}
+          </li>
+        </ul>
+        <button (click)="getPhotos()" [disabled]="selectedAlbums.length > 2 || selectedAlbums.length == 0">Show Photos</button>
+    </div>
+    
+    
+    <router-outlet></router-outlet>
+    

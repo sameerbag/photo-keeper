@@ -1,0 +1,12 @@
+.card {
+    float: left;
+    width: 33%;
+}
+.card li:hover, li.active {
+    color: red;
+    cursor: pointer;
+}
+.card table tr:hover, tr.active {
+    color: red;
+    cursor: pointer;
+}

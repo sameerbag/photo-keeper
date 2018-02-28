@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, NgZone } from '@angular/core';
 import { AppService } from './app.service';
 
 @Component({
@@ -6,10 +6,10 @@ import { AppService } from './app.service';
   templateUrl: './photo.component.html',
   styleUrls: ['./photo.component.css']
 })
-export class PhotoComponent implements OnInit {
+export class PhotoComponent implements OnInit, AfterViewInit {
   private selectedPhotos;
   private allPhotos;
-  constructor(private service: AppService) {
+  constructor(private service: AppService, private zone: NgZone) {
     this.selectedPhotos = [];
     this.allPhotos = [];
   }
@@ -18,25 +18,42 @@ export class PhotoComponent implements OnInit {
     this.getPhotos();
   }
 
+  ngAfterViewInit() {
+    let counter = 0;
+    this.zone.runOutsideAngular(() => {
+      if (this.service.selectedAlbums.length > 0) {
+        setInterval(() => {
+          counter++;
+          if(counter > 1) {
+            counter = 0;
+          }
+          this.setPhotos(counter);
+        }, 20000);
+      }
+      
+    });
+  }
+
   getPhotos() {
     if (this.allPhotos.length === 0) {
       this.service.getPhotos().subscribe(response => {
         this.allPhotos = response;
-        this.setPhotos();
+        this.setPhotos(0);
       });
     } else {
-      this.setPhotos();
+      this.setPhotos(0);
     }
   }
 
-  setPhotos() {
+  setPhotos(id) {
     if (this.allPhotos.length) {
-      this.selectedPhotos = this.allPhotos.filter(item => {
-        return (
-          item.albumId === this.service.selectedAlbums[0] ||
-          item.albumId === this.service.selectedAlbums[1]
-        );
-      });
+      this.zone.run(() => {
+        this.selectedPhotos = this.allPhotos.filter(item => {
+          return (
+            item.albumId === this.service.selectedAlbums[id]
+          );
+        });
+      })
     }
   }
 }

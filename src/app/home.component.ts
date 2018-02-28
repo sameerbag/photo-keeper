@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AppService } from './app.service';
 
 @Component({
@@ -10,11 +11,13 @@ export class HomeComponent implements OnInit {
   title = 'app';
   private users;
   private albums;
+  private selectedAlbums;
   private selectedUser;
 
-  constructor(private service: AppService) {
+  constructor(private service: AppService, private router: Router) {
     this.users = [];
     this.albums = [];
+    this.selectedAlbums = this.service.selectedAlbums;
     this.selectedUser = [];
   }
 
@@ -45,7 +48,7 @@ export class HomeComponent implements OnInit {
   }
 
   selectedAlbum(id) {
-    if (this.service.selectedAlbums.indexOf(id) === -1) {
+    if (this.service.selectedAlbums.indexOf(id) === -1 && this.service.selectedAlbums.length < 2) {
       this.service.selectedAlbums.push(id);
     }
   }
@@ -53,5 +56,9 @@ export class HomeComponent implements OnInit {
   showAlbums(id) {
     this.selectedUser = id;
     this.getAlbums(id);
+  }
+
+  getPhotos() {
+    this.router.navigate(['\photo']);
   }
 }
